@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Security Leaderboard | ShieldPi</title>
+    <meta name="description" content="Which AI model is the safest? We tested 15+ LLMs with 230+ attack techniques across 15 categories. See the full security scores, grades, and vulnerability breakdown.">
+    <meta name="keywords" content="LLM security leaderboard, AI model security scores, GPT-4o security, Claude security, Gemini security, AI vulnerability testing, LLM safety ranking">
+    <meta property="og:title" content="LLM Security Leaderboard — Which AI is Safest?">
+    <meta property="og:description" content="We tested 15+ LLM models with 230+ attack techniques. See which models are safe and which have critical vulnerabilities.">
+    <meta property="og:url" content="https://shieldpi.info">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://shieldpi.info/og-leaderboard.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LLM Security Leaderboard — Which AI is Safest?">
+    <meta name="twitter:description" content="230+ attack techniques. 15+ models tested. Full security scores.">
+    <link rel="canonical" href="https://shieldpi.info">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "LLM Security Leaderboard",
+        "description": "Comprehensive security testing of 15+ LLM models with 230+ attack techniques",
+        "url": "https://shieldpi.info",
+        "publisher": {
+            "@type": "Organization",
+            "name": "ShieldPi",
+            "url": "https://shieldpi.io"
+        }
+    }
+    </script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #09090b;
+            --bg-secondary: #0c0c10;
+            --bg-card: #111116;
+            --bg-card-hover: #16161d;
+            --bg-elevated: #1a1a22;
+            --border: rgba(255,255,255,0.06);
+            --border-bright: rgba(255,255,255,0.1);
+            --text-primary: #f0f0f3;
+            --text-secondary: #9ca3af;
+            --text-muted: #5b5e6b;
+            --accent: #22c55e;
+            --accent-dim: rgba(34,197,94,0.12);
+            --danger: #ef4444;
+            --danger-dim: rgba(239,68,68,0.12);
+            --warning: #eab308;
+            --warning-dim: rgba(234,179,8,0.12);
+            --info: #3b82f6;
+            --info-dim: rgba(59,130,246,0.12);
+        }
+
+        body {
+            font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Typography */
+        .font-display { font-family: 'Space Grotesk', system-ui, sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Subtle grid background */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Ambient glow */
+        .ambient-glow {
+            position: fixed;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(34,197,94,0.04) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Nav */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px) saturate(150%);
+            -webkit-backdrop-filter: blur(16px) saturate(150%);
+            background: rgba(9,9,11,0.7);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        .logo-mark {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #000;
+            letter-spacing: -0.5px;
+        }
+        .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: -0.3px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .nav-link {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--text-primary); }
+        .btn-primary {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 16px;
+            border-radius: 6px;
+            background: var(--accent);
+            color: #000;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover { background: #16a34a; }
+
+        /* Layout */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* Hero */
+        .hero { padding: 80px 0 48px; position: relative; z-index: 1; }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 48px;
+            align-items: start;
+        }
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(36px, 5vw, 52px);
+            font-weight: 700;
+            line-height: 1.08;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+        }
+        .hero h1 span { color: var(--text-muted); font-weight: 400; }
+        .hero-desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            max-width: 480px;
+        }
+        .hero-desc strong { color: var(--text-primary); font-weight: 600; }
+
+        /* Stats sidebar */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            min-width: 260px;
+        }
+        .stat-cell {
+            background: var(--bg-card);
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-cell:hover { background: var(--bg-card-hover); }
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+        .stat-value.green { color: var(--accent); }
+        .stat-value.blue { color: var(--info); }
+        .stat-value.yellow { color: var(--warning); }
+        .stat-value.red { color: var(--danger); }
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+        }
+
+        /* Leaderboard controls */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2px;
+            padding: 0 0 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 3px;
+        }
+        .filter-btn {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .filter-btn:hover { color: var(--text-secondary); }
+        .filter-btn.active {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .sort-select {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%235b5e6b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        /* Leaderboard table */
+        .leaderboard {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-secondary);
+        }
+        .lb-header {
+            display: grid;
+            grid-template-columns: 48px 1fr 80px 200px 120px 72px;
+            gap: 0;
+            padding: 0 20px;
+            height: 40px;
+            align-items: center;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+        .lb-header-cell {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+        .lb-header-cell.center { text-align: center; }
+        .lb-header-cell.right { text-align: right; }
+
+        .lb-row {
+            display: grid;
+            grid-template-columns: 48px 1fr 80px 200px 120px 72px;
+            gap: 0;
+            padding: 0 20px;
+            height: 64px;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+            position: relative;
+        }
+        .lb-row:last-child { border-bottom: none; }
+        .lb-row:hover { background: rgba(255,255,255,0.015); }
+        .lb-row.top-3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+        }
+        .lb-row.rank-1::before { background: var(--accent); }
+        .lb-row.rank-2::before { background: var(--info); }
+        .lb-row.rank-3::before { background: var(--warning); }
+
+        .rank-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .rank-num.gold { color: var(--accent); }
+
+        .model-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+        .model-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+            letter-spacing: -0.5px;
+        }
+        .model-text { min-width: 0; }
+        .model-name {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .model-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tier-tag {
+            font-size: 10px;
+            font-weight: 500;
+            padding: 1px 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted);
+        }
+
+        /* Grade badge */
+        .grade-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 28px;
+            border-radius: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 0 auto;
+        }
+        .grade-A { background: var(--accent-dim); color: var(--accent); }
+        .grade-B { background: var(--info-dim); color: var(--info); }
+        .grade-C { background: var(--warning-dim); color: var(--warning); }
+        .grade-D { background: rgba(249,115,22,0.12); color: #f97316; }
+        .grade-F { background: var(--danger-dim); color: var(--danger); }
+        .grade-pending { background: rgba(255,255,255,0.03); color: var(--text-muted); }
+
+        /* Score bar */
+        .score-cell { display: flex; align-items: center; gap: 10px; }
+        .score-track {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .score-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .score-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            min-width: 28px;
+            text-align: right;
+        }
+
+        /* Vulnerability count */
+        .vuln-cell { text-align: center; }
+        .vuln-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .vuln-critical {
+            font-size: 10px;
+            color: var(--danger);
+            margin-left: 4px;
+        }
+
+        /* Pending state */
+        .pending-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .pending-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(255,255,255,0.03) 0px,
+                rgba(255,255,255,0.03) 8px,
+                transparent 8px,
+                transparent 16px
+            );
+        }
+
+        /* Action link */
+        .action-link {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-align: right;
+            transition: color 0.15s;
+        }
+        .action-link:hover { color: var(--accent); }
+
+        /* Methodology section */
+        .methodology {
+            padding: 64px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .method-card {
+            background: var(--bg-card);
+            padding: 28px 24px;
+            transition: background 0.2s;
+        }
+        .method-card:hover { background: var(--bg-card-hover); }
+        .method-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .method-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .method-desc {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        /* CTA */
+        .cta {
+            padding: 0 0 80px;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-box {
+            border: 1px solid var(--border-bright);
+            border-radius: 12px;
+            padding: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(34,197,94,0.03) 0%, rgba(59,130,246,0.03) 100%);
+        }
+        .cta-text h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+        .cta-text p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 400px;
+        }
+        .cta-actions { display: flex; align-items: center; gap: 12px; }
+        .btn-outline {
+            font-size: 13px;
+            font-weight: 500;
+            padding: 9px 18px;
+            border-radius: 6px;
+            border: 1px solid var(--border-bright);
+            background: transparent;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .footer-brand {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+        .footer-link {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-link:hover { color: var(--text-secondary); }
+
+        /* Animation */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(8px);
+            animation: fadeUp 0.4s ease-out forwards;
+        }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .hero-grid { grid-template-columns: 1fr; }
+            .hero-stats { min-width: unset; }
+            .lb-header, .lb-row {
+                grid-template-columns: 36px 1fr 60px 140px 80px;
+                padding: 0 12px;
+            }
+            .lb-header-cell:last-child, .lb-row > :last-child { display: none; }
+            .method-grid { grid-template-columns: 1fr; }
+            .cta-box { flex-direction: column; gap: 24px; text-align: center; padding: 32px 24px; }
+            .cta-text p { max-width: unset; }
+        }
+        @media (max-width: 600px) {
+            .lb-header, .lb-row {
+                grid-template-columns: 32px 1fr 48px 100px;
+            }
+            .lb-header-cell:nth-child(5), .lb-row > :nth-child(5) { display: none; }
+            .hero h1 { letter-spacing: -1px; }
+            .nav-links .nav-link { display: none; }
+        }
+    </style>
+</head>
+<body class="grid-bg">
+    <div class="ambient-glow"></div>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo">
+                <div class="logo-mark">S</div>
+                <span class="logo-text">ShieldPi</span>
+            </a>
+            <div class="nav-links">
+                <a href="#methodology" class="nav-link">Methodology</a>
+                <a href="https://shieldpi.io" class="nav-link">Product</a>
+                <a href="https://shieldpi.io" class="btn-primary">Start Free Scan</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sprint 3 / D2: Living Leaderboard weekly delta banner -->
+    <div id="weekly-delta-banner" style="
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        margin: 0 auto;
+        max-width: 960px;
+        background: linear-gradient(90deg, rgba(34,197,94,0.08), rgba(34,197,94,0.02));
+        border: 1px solid rgba(34,197,94,0.25);
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 13px;
+        color: #d4d4d8;
+        margin-top: 16px;
+        margin-bottom: -4px;
+    "></div>
+    <style>
+        .delta-pulse {
+            color: #22c55e;
+            font-size: 16px;
+            animation: pulse-fade 2s ease-in-out infinite;
+        }
+        @keyframes pulse-fade { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    </style>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div>
+                    <div class="hero-eyebrow">
+                        <span class="pulse-dot"></span>
+                        Live Data
+                    </div>
+                    <h1>LLM Security<br>Leaderboard</h1>
+                    <p class="hero-desc">
+                        We test every major AI model against <strong>230+ attack techniques</strong> across <strong>15 categories</strong> including prompt injection, jailbreaks, data exfiltration, and social engineering. <span style="color:var(--text-muted)">Updated continuously.</span>
+                    </p>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-cell">
+                        <div class="stat-value green" id="stat-models">15</div>
+                        <div class="stat-label">Models Tested</div>
+                    </div>
+                    <div class="stat-cell">
+                        <div class="stat-value blue">230+</div>
+                        <div class="stat-label">Attack Vectors</div>
+                    </div>
+                    <div class="stat-cell">
+                        <div class="stat-value yellow">15</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                    <div class="stat-cell">
+                        <div class="stat-value red" id="stat-vulns">--</div>
+                        <div class="stat-label">Vulns Found</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section style="padding: 0 0 48px; position: relative; z-index: 1;">
+        <div class="container">
+            <div class="controls">
+                <div class="filter-group">
+                    <button class="filter-btn active" data-tier="all" onclick="filterTier('all')">All</button>
+                    <button class="filter-btn" data-tier="flagship" onclick="filterTier('flagship')">Flagship</button>
+                    <button class="filter-btn" data-tier="production" onclick="filterTier('production')">Production</button>
+                    <button class="filter-btn" data-tier="open-source" onclick="filterTier('open-source')">Open Source</button>
+                </div>
+                <select class="sort-select" id="sortBy" onchange="sortModels()">
+                    <option value="score-desc">Highest Score</option>
+                    <option value="score-asc">Lowest Score</option>
+                    <option value="name">Name A-Z</option>
+                    <option value="vulns">Most Vulnerabilities</option>
+                </select>
+            </div>
+
+            <div class="leaderboard">
+                <div class="lb-header">
+                    <div class="lb-header-cell">#</div>
+                    <div class="lb-header-cell">Model</div>
+                    <div class="lb-header-cell center">Grade</div>
+                    <div class="lb-header-cell">Security Score</div>
+                    <div class="lb-header-cell center">Vulns</div>
+                    <div class="lb-header-cell right">Scan</div>
+                </div>
+                <div id="leaderboard-body">
+                    <!-- Loading skeletons -->
+                    <div class="lb-row" style="opacity:0.5"><div></div><div style="display:flex;align-items:center;gap:12px"><div class="skeleton" style="width:32px;height:32px;border-radius:8px"></div><div><div class="skeleton" style="width:140px;height:14px;margin-bottom:4px"></div><div class="skeleton" style="width:80px;height:10px"></div></div></div><div></div><div><div class="skeleton" style="width:100%;height:4px"></div></div><div></div><div></div></div>
+                    <div class="lb-row" style="opacity:0.3"><div></div><div style="display:flex;align-items:center;gap:12px"><div class="skeleton" style="width:32px;height:32px;border-radius:8px"></div><div><div class="skeleton" style="width:120px;height:14px;margin-bottom:4px"></div><div class="skeleton" style="width:60px;height:10px"></div></div></div><div></div><div><div class="skeleton" style="width:100%;height:4px"></div></div><div></div><div></div></div>
+                    <div class="lb-row" style="opacity:0.15"><div></div><div style="display:flex;align-items:center;gap:12px"><div class="skeleton" style="width:32px;height:32px;border-radius:8px"></div><div><div class="skeleton" style="width:100px;height:14px;margin-bottom:4px"></div><div class="skeleton" style="width:70px;height:10px"></div></div></div><div></div><div><div class="skeleton" style="width:100%;height:4px"></div></div><div></div><div></div></div>
+                </div>
+            </div>
+
+            <p style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:12px;">
+                Scores reflect automated adversarial testing. Higher = safer. <a href="#methodology" style="color:var(--accent); text-decoration:none;">See methodology</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- Methodology -->
+    <section class="methodology" id="methodology">
+        <div class="container">
+            <div style="margin-bottom: 32px;">
+                <div style="font-size:11px; font-weight:600; color:var(--text-muted); letter-spacing:0.8px; text-transform:uppercase; margin-bottom:8px;">How We Test</div>
+                <h2 class="font-display" style="font-size:28px; font-weight:600; letter-spacing:-0.5px;">Testing Methodology</h2>
+            </div>
+            <div class="method-grid">
+                <div class="method-card">
+                    <div class="method-num">01</div>
+                    <div class="method-title">Multi-Turn Attack Chains</div>
+                    <div class="method-desc">7-turn crescendo attacks that gradually escalate from benign to adversarial, testing resistance to social engineering over extended conversations.</div>
+                </div>
+                <div class="method-card">
+                    <div class="method-num">02</div>
+                    <div class="method-title">Big Brain Analysis</div>
+                    <div class="method-desc">AI-powered reconnaissance identifies each model's specific weaknesses using Scout, Amplify, and Deep Dive phases before launching targeted attacks.</div>
+                </div>
+                <div class="method-card">
+                    <div class="method-num">03</div>
+                    <div class="method-title">15 Attack Categories</div>
+                    <div class="method-desc">Prompt injection, jailbreaks, data exfiltration, social engineering, credential extraction, authority impersonation, tool abuse, and more.</div>
+                </div>
+                <div class="method-card">
+                    <div class="method-num">04</div>
+                    <div class="method-title">5-Layer Authority Ladder</div>
+                    <div class="method-desc">Attacks escalate through 5 personas from curious student to emergency responder, testing how models respond to increasing authority pressure.</div>
+                </div>
+                <div class="method-card">
+                    <div class="method-num">05</div>
+                    <div class="method-title">LLM Judge Verification</div>
+                    <div class="method-desc">Every finding is verified by an independent LLM judge that scores confidence, checks for false positives, and classifies severity bands.</div>
+                </div>
+                <div class="method-card">
+                    <div class="method-num">06</div>
+                    <div class="method-title">Continuous Monitoring</div>
+                    <div class="method-desc">Attack techniques are harvested from 15+ sources including academic papers, security research, and community jailbreak databases. Updated every 6 hours.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-box">
+                <div class="cta-text">
+                    <h2>Test Your AI</h2>
+                    <p>Run the same attack suite against your chatbot, agent, or API endpoint. Get a full security report with remediation guidance.</p>
+                </div>
+                <div class="cta-actions">
+                    <a href="https://shieldpi.io" class="btn-outline">Learn More</a>
+                    <a href="https://shieldpi.io" class="btn-primary" style="padding: 9px 20px;">Start Free Scan</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <div class="logo-mark" style="width:20px; height:20px; font-size:9px; border-radius:4px;">S</div>
+                    ShieldPi Watchtower
+                </div>
+                <div class="footer-links">
+                    <a href="https://shieldpi.io" class="footer-link">Product</a>
+                    <a href="#methodology" class="footer-link">Methodology</a>
+                    <a href="mailto:support@shieldpi.io" class="footer-link">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    const PROVIDERS = {
+        'OpenAI':    { color: '#10a37f', letter: 'O' },
+        'Anthropic': { color: '#d4a574', letter: 'A' },
+        'Google':    { color: '#4285f4', letter: 'G' },
+        'xAI':       { color: '#1d9bf0', letter: 'X' },
+        'DeepSeek':  { color: '#0066ff', letter: 'D' },
+        'Mistral':   { color: '#ff7000', letter: 'M' },
+        'Meta':      { color: '#0668e1', letter: 'M' },
+        'Alibaba':   { color: '#6236ff', letter: 'Q' },
+        'Cohere':    { color: '#d18ee2', letter: 'C' },
+        'Microsoft': { color: '#00a4ef', letter: 'P' },
+        'NVIDIA':    { color: '#76b900', letter: 'N' }
+    };
+
+    const MODELS = [
+        { model: 'Claude Sonnet 4.5', provider: 'Anthropic', tier: 'flagship', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'GPT-4o', provider: 'OpenAI', tier: 'flagship', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Gemini 2.5 Pro', provider: 'Google', tier: 'flagship', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Grok 2', provider: 'xAI', tier: 'flagship', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'DeepSeek V3', provider: 'DeepSeek', tier: 'flagship', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'GPT-4o Mini', provider: 'OpenAI', tier: 'production', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Claude Haiku 4.5', provider: 'Anthropic', tier: 'production', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Gemini 2.0 Flash', provider: 'Google', tier: 'production', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Mistral Large', provider: 'Mistral', tier: 'production', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Llama 3.1 70B', provider: 'Meta', tier: 'production', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Qwen 2.5 72B', provider: 'Alibaba', tier: 'production', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Command R+', provider: 'Cohere', tier: 'production', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Llama 3.1 8B', provider: 'Meta', tier: 'open-source', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Mixtral 8x7B', provider: 'Mistral', tier: 'open-source', score: null, grade: null, vulns: null, critical: 0 },
+        { model: 'Phi-3 Medium', provider: 'Microsoft', tier: 'open-source', score: null, grade: null, vulns: null, critical: 0 },
+    ];
+
+    let currentTier = 'all';
+
+    function gradeClass(g) {
+        if (!g) return 'grade-pending';
+        if (g.startsWith('A')) return 'grade-A';
+        if (g.startsWith('B')) return 'grade-B';
+        if (g.startsWith('C')) return 'grade-C';
+        if (g.startsWith('D')) return 'grade-D';
+        return 'grade-F';
+    }
+
+    function scoreColor(s) {
+        if (s === null) return 'var(--text-muted)';
+        if (s >= 80) return 'var(--accent)';
+        if (s >= 60) return 'var(--info)';
+        if (s >= 40) return 'var(--warning)';
+        return 'var(--danger)';
+    }
+
+    function renderRow(m, idx) {
+        const p = PROVIDERS[m.provider] || { color: '#6b7280', letter: '?' };
+        const pending = m.score === null;
+        const rank = idx + 1;
+        const isTop3 = !pending && rank <= 3;
+
+        return '<div class="lb-row fade-up' + (isTop3 ? ' top-3 rank-' + rank : '') + '" style="animation-delay:' + (idx * 40) + 'ms">' +
+            '<div class="rank-num' + (isTop3 ? ' gold' : '') + '">' + (pending ? '--' : rank) + '</div>' +
+            '<div class="model-info">' +
+                '<div class="model-icon" style="background:' + p.color + '18; color:' + p.color + '">' + p.letter + '</div>' +
+                '<div class="model-text">' +
+                    '<div class="model-name">' + m.model + '</div>' +
+                    '<div class="model-meta">' + m.provider + ' <span class="tier-tag">' + m.tier + '</span></div>' +
+                '</div>' +
+            '</div>' +
+            '<div style="text-align:center"><span class="grade-badge ' + gradeClass(m.grade) + '">' + (m.grade || '--') + '</span></div>' +
+            '<div class="score-cell">' +
+                (pending
+                    ? '<div style="flex:1"><div class="pending-bar"></div></div><span class="score-num" style="color:var(--text-muted)">--</span>'
+                    : '<div class="score-track"><div class="score-fill" style="width:' + m.score + '%;background:' + scoreColor(m.score) + '"></div></div><span class="score-num" style="color:' + scoreColor(m.score) + '">' + m.score + '</span>'
+                ) +
+            '</div>' +
+            '<div class="vuln-cell">' +
+                (pending
+                    ? '<span class="pending-text">--</span>'
+                    : '<span class="vuln-count">' + m.vulns + '</span>' + (m.critical > 0 ? '<span class="vuln-critical">' + m.critical + ' crit</span>' : '')
+                ) +
+            '</div>' +
+            '<div style="text-align:right"><a href="https://shieldpi.io" class="action-link">Scan</a></div>' +
+        '</div>';
+    }
+
+    function renderLeaderboard() {
+        let data = [...MODELS];
+        if (currentTier !== 'all') data = data.filter(d => d.tier === currentTier);
+
+        const sortBy = document.getElementById('sortBy').value;
+        if (sortBy === 'score-desc') data.sort((a, b) => (b.score || -1) - (a.score || -1));
+        if (sortBy === 'score-asc') data.sort((a, b) => (a.score || 999) - (b.score || 999));
+        if (sortBy === 'name') data.sort((a, b) => a.model.localeCompare(b.model));
+        if (sortBy === 'vulns') data.sort((a, b) => (b.vulns || 0) - (a.vulns || 0));
+
+        document.getElementById('leaderboard-body').innerHTML = data.map(renderRow).join('');
+
+        const tested = MODELS.filter(d => d.score !== null).length;
+        document.getElementById('stat-models').textContent = tested > 0 ? tested : MODELS.length;
+        const totalVulns = MODELS.reduce((s, d) => s + (d.vulns || 0), 0);
+        document.getElementById('stat-vulns').textContent = totalVulns > 0 ? totalVulns : '--';
+    }
+
+    function filterTier(tier) {
+        currentTier = tier;
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.tier === tier);
+        });
+        renderLeaderboard();
+    }
+
+    function sortModels() { renderLeaderboard(); }
+
+    async function loadData() {
+        try {
+            const resp = await fetch('https://api.shieldpi.io/api/models/leaderboard');
+            if (resp.ok) {
+                const data = await resp.json();
+                if (data.models && data.models.length > 0) {
+                    MODELS.length = 0;
+                    data.models.forEach(m => {
+                        const p = PROVIDERS[m.provider] || { color: '#6b7280', letter: '?' };
+                        MODELS.push({
+                            model: m.model_name || m.model_display_name,
+                            provider: m.provider,
+                            tier: m.tier || 'production',
+                            score: m.security_score,
+                            grade: m.grade || null,
+                            vulns: m.vulnerabilities_found || 0,
+                            critical: m.critical || 0
+                        });
+                    });
+                }
+            }
+        } catch (e) {
+            console.log('Using placeholder data');
+        }
+        renderLeaderboard();
+        loadWeeklyDelta();
+    }
+
+    // Sprint 3 / D2 — Living Leaderboard weekly delta feed
+    async function loadWeeklyDelta() {
+        const banner = document.getElementById('weekly-delta-banner');
+        if (!banner) return;
+        try {
+            const resp = await fetch('https://api.shieldpi.io/api/intelligence/leaderboard-feed');
+            if (!resp.ok) return;
+            const data = await resp.json();
+            const added = data.techniques_added_this_week || 0;
+            const scans = data.total_scans_this_week || 0;
+            const movers = data.family_movers || [];
+            const topMover = movers[0];
+            const moverText = topMover
+                ? ` · ${topMover.family} avg score ${topMover.avg_score} (${topMover.scans_this_week} scans)`
+                : '';
+            banner.innerHTML = `
+                <span class="delta-pulse">●</span>
+                <strong>${added.toLocaleString()}</strong> new attack techniques this week
+                · <strong>${scans.toLocaleString()}</strong> live scans${moverText}
+                · Updated ${new Date(data.generated_at).toLocaleString()}
+            `;
+            banner.style.display = 'flex';
+        } catch (e) {
+            // silent — banner stays hidden
+        }
+    }
+
+    // Sprint 3 / D2 — "Reproduce this scan" deeplink
+    function reproduceScan(modelName) {
+        const url = `https://shieldpi.io/dashboard/scans/new?prefill_model=${encodeURIComponent(modelName)}&utm_source=leaderboard`;
+        window.open(url, '_blank', 'noopener');
+    }
+
+    loadData();
+    </script>
+</body>
+</html>
